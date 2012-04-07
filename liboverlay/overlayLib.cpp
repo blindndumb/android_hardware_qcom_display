@@ -19,7 +19,7 @@
 #include "gralloc_priv.h"
 
 #define INTERLACE_MASK 0x80
-#define DEBUG_OVERLAY true
+#define DEBUG_OVERLAY false
 /* Helper functions */
 static inline size_t ALIGN(size_t x, size_t align) {
     return (x + align-1) & ~(align-1);
