@@ -893,6 +893,7 @@ bool canSkipComposition(hwc_context_t* ctx, int yuvBufferCount, int currentLayer
             ctx->previousLayerCount = currentLayerCount;
             return false;
         }
+#if 0
         // We either have only one overlay layer or we have
         // all non-updating UI layers.
         // We can skip the composition of the UI layers.
@@ -900,6 +901,7 @@ bool canSkipComposition(hwc_context_t* ctx, int yuvBufferCount, int currentLayer
             ((currentLayerCount - 1) == numLayersNotUpdating)) {
             return true;
         }
+#endif
     } else {
         ctx->previousLayerCount = -1;
     }
