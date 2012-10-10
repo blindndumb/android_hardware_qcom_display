@@ -538,9 +538,9 @@ bool ExternalDisplay::commit()
 {
     if(mFd == -1) {
         return false;
-    } else if(ioctl(mFd, MSMFB_OVERLAY_COMMIT, &mExternalDisplay) == -1) {
-         ALOGE("%s: MSMFB_OVERLAY_COMMIT failed errno: %d , str: %s",
-                                       __FUNCTION__, errno, strerror(errno));
+    } else if(ioctl(mFd, FBIOPUT_VSCREENINFO, &mVInfo) == -1) {
+         ALOGE("%s: FBIOPUT_VSCREENINFO, str: %s", __FUNCTION__,
+                                                 strerror(errno));
          return false;
     }
     return true;
