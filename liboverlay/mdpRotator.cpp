@@ -81,15 +81,12 @@ void MdpRot::doTransform() {
 
 bool MdpRot::commit() {
     doTransform();
-    if(rotConfChanged()) {
-        if(!overlay::mdp_wrapper::startRotator(mFd.getFD(), mRotImgInfo)) {
-            ALOGE("MdpRot commit failed");
-            dump();
-            return false;
-        }
-        save();
-        mRotDataInfo.session_id = mRotImgInfo.session_id;
+    if(!overlay::mdp_wrapper::startRotator(mFd.getFD(), mRotImgInfo)) {
+        ALOGE("MdpRot commit failed");
+        dump();
+        return false;
     }
+    mRotDataInfo.session_id = mRotImgInfo.session_id;
     return true;
 }
 
@@ -159,7 +156,6 @@ bool MdpRot::remap(uint32_t numbufs) {
 
 void MdpRot::reset() {
     ovutils::memset0(mRotImgInfo);
-    ovutils::memset0(mLSRotImgInfo);
     ovutils::memset0(mRotDataInfo);
     ovutils::memset0(mMem.curr().mRotOffset);
     ovutils::memset0(mMem.prev().mRotOffset);

@@ -62,7 +62,7 @@ public:
     virtual void setSrcFB() = 0;
 
     virtual bool enabled() const = 0;
-    virtual uint32_t getSessId() const = 0;
+    virtual int getSessId() const = 0;
     virtual int getDstMemId() const = 0;
     virtual uint32_t getDstOffset() const = 0;
     virtual void dump() const = 0;
@@ -105,7 +105,7 @@ public:
     /* Retusn true if rotator enabled */
     virtual bool enabled() const = 0;
     /* returns rotator session id */
-    virtual uint32_t getSessId() const = 0;
+    virtual int getSessId() const = 0;
     /* get dst (for offset and memory id) non-virt */
     virtual int getDstMemId() const = 0;
     virtual uint32_t getDstOffset() const = 0;
@@ -139,7 +139,7 @@ public:
     virtual void setEnable();
     virtual void setDisable();
     virtual bool enabled () const;
-    virtual uint32_t getSessId() const;
+    virtual int getSessId() const;
     virtual bool queueBuffer(int fd, uint32_t offset);
     virtual void dump() const;
 };
@@ -164,7 +164,7 @@ public:
     virtual void setDisable();
     virtual bool enabled () const;
     virtual void setSrcFB();
-    virtual uint32_t getSessId() const;
+    virtual int getSessId() const;
     virtual int getDstMemId() const;
     virtual uint32_t getDstOffset() const;
     virtual void dump() const;
@@ -226,7 +226,7 @@ public:
     void setRotations(uint32_t r);
     void setSrcFB();
     bool enabled() const;
-    uint32_t getSessId() const;
+    int getSessId() const;
     int getDstMemId() const;
     uint32_t getDstOffset() const;
     void dump() const;
@@ -240,17 +240,8 @@ private:
     /* reset underlying data, basically memset 0 */
     void reset();
 
-    /* return true if current rotator config is different
-     * than last known config */
-    bool rotConfChanged() const;
-
-    /* save mRotImgInfo to be last known good config*/
-    void save();
-
     /* rot info*/
     msm_rotator_img_info mRotImgInfo;
-    /* Last saved rot info*/
-    msm_rotator_img_info mLSRotImgInfo;
     /* rot data */
     msm_rotator_data_info mRotDataInfo;
     /* Orientation */
@@ -284,7 +275,7 @@ public:
     void setRotations(uint32_t r);
     void setSrcFB();
     bool enabled() const;
-    uint32_t getSessId() const;
+    int getSessId() const;
     int getDstMemId() const;
     uint32_t getDstOffset() const;
     void dump() const;
@@ -367,7 +358,7 @@ inline uint32_t Rotator::getDstOffset() const {
 inline void Rotator::setRotations(uint32_t rot) {
     mRot->setRotations (rot);
 }
-inline uint32_t Rotator::getSessId() const {
+inline int Rotator::getSessId() const {
     return mRot->getSessId();
 }
 inline void Rotator::dump() const {
@@ -393,7 +384,7 @@ inline void NullRotator::setRotations(uint32_t) {}
 inline void NullRotator::setEnable() {}
 inline void NullRotator::setDisable() {}
 inline bool NullRotator::enabled() const { return false; }
-inline uint32_t NullRotator::getSessId() const { return 0; }
+inline int NullRotator::getSessId() const { return -1; }
 inline bool NullRotator::queueBuffer(int fd, uint32_t offset) { return true; }
 inline void NullRotator::setSrcFB() {}
 inline int NullRotator::getDstMemId() const { return -1; }
@@ -416,20 +407,9 @@ inline int MdpRot::getDstMemId() const {
 inline uint32_t MdpRot::getDstOffset() const {
     return mRotDataInfo.dst.offset;
 }
-inline uint32_t MdpRot::getSessId() const { return mRotImgInfo.session_id; }
+inline int MdpRot::getSessId() const { return mRotImgInfo.session_id; }
 inline void MdpRot::setSrcFB() {
     mRotDataInfo.src.flags |= MDP_MEMORY_ID_TYPE_FB;
-}
-inline void MdpRot::save() {
-    mLSRotImgInfo = mRotImgInfo;
-}
-inline bool MdpRot::rotConfChanged() const {
-    // 0 means same
-    if(0 == ::memcmp(&mRotImgInfo, &mLSRotImgInfo,
-                sizeof (msm_rotator_img_info))) {
-        return false;
-    }
-    return true;
 }
 
 
@@ -446,7 +426,7 @@ inline int MdssRot::getDstMemId() const {
 inline uint32_t MdssRot::getDstOffset() const {
     return mRotData.dst_data.offset;
 }
-inline uint32_t MdssRot::getSessId() const { return mRotInfo.id; }
+inline int MdssRot::getSessId() const { return mRotInfo.id; }
 inline void MdssRot::setSrcFB() {
     mRotData.data.flags |= MDP_MEMORY_ID_TYPE_FB;
 }
