@@ -66,11 +66,6 @@ namespace overlay {
 
 // fwd
 class Overlay;
-class OvFD;
-
-/* helper function to open by using fbnum */
-bool open(OvFD& fd, uint32_t fbnum, const char* const dev,
-    int flags = O_RDWR);
 
 namespace utils {
 struct Whf;
@@ -836,11 +831,6 @@ inline void ScreenInfo::dump(const char* const s) const {
             s, mFBWidth, mFBHeight, mFBbpp, mFBystride);
 }
 
-inline bool openDev(OvFD& fd, int fbnum,
-    const char* const devpath, int flags) {
-    return overlay::open(fd, fbnum, devpath, flags);
-}
-
 template <class T>
 inline void even_ceil(T& value) {
     if(value & 1)
@@ -873,6 +863,13 @@ public:
 
 
 //--------------------Class OvFD stuff (namespace overlay only) -----------
+ 	
+
+class OvFD;
+
+/* helper function to open by using fbnum */
+bool open(OvFD& fd, uint32_t fbnum, const char* const dev,
+    int flags = O_RDWR);
 
 /*
 * Holds one FD
