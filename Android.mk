@@ -1,7 +1,16 @@
-ifneq ($(filter msm8960,$(TARGET_BOARD_PLATFORM)),)
+#Enables the listed display HAL modules
+#libs to be built for QCOM targets only
 
-display-hals := libgralloc libgenlock libcopybit liblight
+ifeq ($(BOARD_USES_QCOM_HARDWARE),true)
+display-hals := libgralloc libgenlock libcopybit
 display-hals += libhwcomposer liboverlay libqdutils libexternal libqservice
 
-include $(call all-named-subdir-makefiles,$(display-hals))
+ifneq ($(TARGET_PROVIDES_LIBLIGHTS),true)
+display-hals += liblight
 endif
+
+endif
+
+display-hals += libtilerenderer
+
+include $(call all-named-subdir-makefiles,$(display-hals))
